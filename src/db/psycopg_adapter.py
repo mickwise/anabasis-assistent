@@ -31,7 +31,7 @@ from __future__ import annotations
 import os
 from contextlib import contextmanager
 from dataclasses import dataclass
-from typing import Any, Generator, Optional, Union
+from typing import Any, Generator
 
 import psycopg
 from psycopg import Connection
@@ -53,37 +53,37 @@ class DBConfig:
 
     Parameters
     ----------
-    dsn : Optional[str]
+    dsn : str | None
         Full Postgres DSN, e.g. "postgresql://user:pass@host:5432/db".
         If provided, it takes precedence over the discrete fields.
-    host : Optional[str]
+    host : str | None
         Postgres host (PGHOST).
-    port : Optional[int]
+    port : int | None
         Postgres port (PGPORT).
-    dbname : Optional[str]
+    dbname : str | None
         Postgres database name (PGDATABASE).
-    user : Optional[str]
+    user : str | None
         Postgres user (PGUSER).
-    password : Optional[str]
+    password : str | None
         Postgres password (PGPASSWORD).
-    sslmode : Optional[str]
+    sslmode : str | None
         SSL mode (PGSSLMODE). Examples: "disable", "require".
 
     Attributes
     ----------
-    dsn : Optional[str]
+    dsn : str | None
         Full Postgres DSN.
-    host : Optional[str]
+    host : str | None
         Postgres host.
-    port : Optional[int]
+    port : int | None
         Postgres port.
-    dbname : Optional[str]
+    dbname : str | None
         Postgres database name.
-    user : Optional[str]
+    user : str | None
         Postgres user.
-    password : Optional[str]
+    password : str | None
         Postgres password.
-    sslmode : Optional[str]
+    sslmode : str | None
         SSL mode.
 
     Notes
@@ -92,13 +92,13 @@ class DBConfig:
     - `dsn` (if set) is treated as authoritative.
     """
 
-    dsn: Optional[str] = None
-    host: Optional[str] = None
-    port: Optional[int] = None
-    dbname: Optional[str] = None
-    user: Optional[str] = None
-    password: Optional[str] = None
-    sslmode: Optional[str] = None
+    dsn: str | None = None
+    host: str | None = None
+    port: int | None = None
+    dbname: str | None = None
+    user: str | None = None
+    password: str | None = None
+    sslmode: str | None = None
 
     @classmethod
     def from_env(cls) -> "DBConfig":
@@ -114,7 +114,7 @@ class DBConfig:
         DBConfig
             Configuration loaded from `DATABASE_URL` when present, otherwise
             from `PGHOST`, `PGPORT`, `PGDATABASE`, `PGUSER`, `PGPASSWORD`, and
-            optional `PGSSLMODE`.
+            `PG | NoneSLMODE`.
 
         Raises
         ------
@@ -138,7 +138,7 @@ class DBConfig:
         password = os.getenv("PGPASSWORD")
         sslmode = os.getenv("PGSSLMODE")
 
-        port: Optional[int]
+        port: int | None
         if port_raw is None or port_raw == "":
             port = None
         else:
@@ -210,14 +210,14 @@ def as_dsn(cfg: DBConfig) -> str:
 
 @contextmanager
 def connect(
-    dsn_or_cfg: Union[str, DBConfig],
+    dsn_or_cfg: str |  DBConfig,
 ) -> Generator[Connection[Any], None, None]:
     """
     Open a psycopg3 connection and ensure it is closed.
 
     Parameters
     ----------
-    dsn_or_cfg : Union[str, DBConfig]
+    dsn_or_cfg : str | DBConfig
         Either a DSN string or a DBConfig object.
 
     Returns

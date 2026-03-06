@@ -23,11 +23,23 @@ class LlmResponseParser:
     def __init__(self, options: DoNotUseDirectlyCallManager):
         self.__options = options
 
+    def ParseSpellSource(
+        self, llm_response: str, baml_options: BamlCallOptions = {},
+    ) -> types.SpellInsertRow:
+        __result__ = self.__options.merge_options(baml_options).parse_response(function_name="ParseSpellSource", llm_response=llm_response, mode="request")
+        return typing.cast(types.SpellInsertRow, __result__)
+
     def Roll(
         self, llm_response: str, baml_options: BamlCallOptions = {},
     ) -> types.RollPlan:
         __result__ = self.__options.merge_options(baml_options).parse_response(function_name="Roll", llm_response=llm_response, mode="request")
         return typing.cast(types.RollPlan, __result__)
+
+    def SummarizeCharacterSheetIngestion(
+        self, llm_response: str, baml_options: BamlCallOptions = {},
+    ) -> types.CharacterSheetIngestionSummary:
+        __result__ = self.__options.merge_options(baml_options).parse_response(function_name="SummarizeCharacterSheetIngestion", llm_response=llm_response, mode="request")
+        return typing.cast(types.CharacterSheetIngestionSummary, __result__)
 
     
 
@@ -37,10 +49,22 @@ class LlmStreamParser:
     def __init__(self, options: DoNotUseDirectlyCallManager):
         self.__options = options
 
+    def ParseSpellSource(
+        self, llm_response: str, baml_options: BamlCallOptions = {},
+    ) -> stream_types.SpellInsertRow:
+        __result__ = self.__options.merge_options(baml_options).parse_response(function_name="ParseSpellSource", llm_response=llm_response, mode="stream")
+        return typing.cast(stream_types.SpellInsertRow, __result__)
+
     def Roll(
         self, llm_response: str, baml_options: BamlCallOptions = {},
     ) -> stream_types.RollPlan:
         __result__ = self.__options.merge_options(baml_options).parse_response(function_name="Roll", llm_response=llm_response, mode="stream")
         return typing.cast(stream_types.RollPlan, __result__)
+
+    def SummarizeCharacterSheetIngestion(
+        self, llm_response: str, baml_options: BamlCallOptions = {},
+    ) -> stream_types.CharacterSheetIngestionSummary:
+        __result__ = self.__options.merge_options(baml_options).parse_response(function_name="SummarizeCharacterSheetIngestion", llm_response=llm_response, mode="stream")
+        return typing.cast(stream_types.CharacterSheetIngestionSummary, __result__)
 
     

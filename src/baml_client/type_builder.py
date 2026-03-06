@@ -20,23 +20,47 @@ from .globals import DO_NOT_USE_DIRECTLY_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_RUNTIM
 class TypeBuilder(type_builder.TypeBuilder):
     def __init__(self):
         super().__init__(classes=set(
-          ["DiceTerm","RollPlan",]
+          ["CharacterSheetIngestionError","CharacterSheetIngestionResult","CharacterSheetIngestionSummary","DiceTerm","RollPlan","SpellInsertRow",]
         ), enums=set(
-          ["RollMode",]
+          ["CharacterSheetIngestionErrorType","DamageType","RollMode","SaveAbility",]
         ), runtime=DO_NOT_USE_DIRECTLY_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_RUNTIME)
 
     # #########################################################################
-    # Generated enums 1
+    # Generated enums 4
     # #########################################################################
+
+    @property
+    def CharacterSheetIngestionErrorType(self) -> "CharacterSheetIngestionErrorTypeViewer":
+        return CharacterSheetIngestionErrorTypeViewer(self)
+
+    @property
+    def DamageType(self) -> "DamageTypeViewer":
+        return DamageTypeViewer(self)
 
     @property
     def RollMode(self) -> "RollModeViewer":
         return RollModeViewer(self)
 
+    @property
+    def SaveAbility(self) -> "SaveAbilityViewer":
+        return SaveAbilityViewer(self)
+
 
     # #########################################################################
-    # Generated classes 2
+    # Generated classes 6
     # #########################################################################
+
+    @property
+    def CharacterSheetIngestionError(self) -> "CharacterSheetIngestionErrorViewer":
+        return CharacterSheetIngestionErrorViewer(self)
+
+    @property
+    def CharacterSheetIngestionResult(self) -> "CharacterSheetIngestionResultViewer":
+        return CharacterSheetIngestionResultViewer(self)
+
+    @property
+    def CharacterSheetIngestionSummary(self) -> "CharacterSheetIngestionSummaryViewer":
+        return CharacterSheetIngestionSummaryViewer(self)
 
     @property
     def DiceTerm(self) -> "DiceTermViewer":
@@ -46,11 +70,147 @@ class TypeBuilder(type_builder.TypeBuilder):
     def RollPlan(self) -> "RollPlanViewer":
         return RollPlanViewer(self)
 
+    @property
+    def SpellInsertRow(self) -> "SpellInsertRowViewer":
+        return SpellInsertRowViewer(self)
+
 
 
 # #########################################################################
-# Generated enums 1
+# Generated enums 4
 # #########################################################################
+
+class CharacterSheetIngestionErrorTypeAst:
+    def __init__(self, tb: type_builder.TypeBuilder):
+        _tb = tb._tb # type: ignore (we know how to use this private attribute)
+        self._bldr = _tb.enum("CharacterSheetIngestionErrorType")
+        self._values: typing.Set[str] = set([  "UnsupportedPDFSchema",  "ItemNotFound",  "SpellNotFound",  ])
+        self._vals = CharacterSheetIngestionErrorTypeValues(self._bldr, self._values)
+
+    def type(self) -> baml_py.FieldType:
+        return self._bldr.field()
+
+    @property
+    def values(self) -> "CharacterSheetIngestionErrorTypeValues":
+        return self._vals
+
+
+class CharacterSheetIngestionErrorTypeViewer(CharacterSheetIngestionErrorTypeAst):
+    def __init__(self, tb: type_builder.TypeBuilder):
+        super().__init__(tb)
+
+    
+    def list_values(self) -> typing.List[typing.Tuple[str, type_builder.EnumValueViewer]]:
+        return [(name, type_builder.EnumValueViewer(self._bldr.value(name))) for name in self._values]
+    
+
+class CharacterSheetIngestionErrorTypeValues:
+    def __init__(self, enum_bldr: baml_py.EnumBuilder, values: typing.Set[str]):
+        self.__bldr = enum_bldr
+        self.__values = values # type: ignore (we know how to use this private attribute) # noqa: F821
+
+    
+    
+    @property
+    def UnsupportedPDFSchema(self) -> type_builder.EnumValueViewer:
+        return type_builder.EnumValueViewer(self.__bldr.value("UnsupportedPDFSchema"))
+    
+    @property
+    def ItemNotFound(self) -> type_builder.EnumValueViewer:
+        return type_builder.EnumValueViewer(self.__bldr.value("ItemNotFound"))
+    
+    @property
+    def SpellNotFound(self) -> type_builder.EnumValueViewer:
+        return type_builder.EnumValueViewer(self.__bldr.value("SpellNotFound"))
+    
+    
+
+
+class DamageTypeAst:
+    def __init__(self, tb: type_builder.TypeBuilder):
+        _tb = tb._tb # type: ignore (we know how to use this private attribute)
+        self._bldr = _tb.enum("DamageType")
+        self._values: typing.Set[str] = set([  "ACID",  "BLUDGEONING",  "COLD",  "FIRE",  "FORCE",  "LIGHTNING",  "NECROTIC",  "PIERCING",  "POISON",  "PSYCHIC",  "RADIANT",  "SLASHING",  "THUNDER",  ])
+        self._vals = DamageTypeValues(self._bldr, self._values)
+
+    def type(self) -> baml_py.FieldType:
+        return self._bldr.field()
+
+    @property
+    def values(self) -> "DamageTypeValues":
+        return self._vals
+
+
+class DamageTypeViewer(DamageTypeAst):
+    def __init__(self, tb: type_builder.TypeBuilder):
+        super().__init__(tb)
+
+    
+    def list_values(self) -> typing.List[typing.Tuple[str, type_builder.EnumValueViewer]]:
+        return [(name, type_builder.EnumValueViewer(self._bldr.value(name))) for name in self._values]
+    
+
+class DamageTypeValues:
+    def __init__(self, enum_bldr: baml_py.EnumBuilder, values: typing.Set[str]):
+        self.__bldr = enum_bldr
+        self.__values = values # type: ignore (we know how to use this private attribute) # noqa: F821
+
+    
+    
+    @property
+    def ACID(self) -> type_builder.EnumValueViewer:
+        return type_builder.EnumValueViewer(self.__bldr.value("ACID"))
+    
+    @property
+    def BLUDGEONING(self) -> type_builder.EnumValueViewer:
+        return type_builder.EnumValueViewer(self.__bldr.value("BLUDGEONING"))
+    
+    @property
+    def COLD(self) -> type_builder.EnumValueViewer:
+        return type_builder.EnumValueViewer(self.__bldr.value("COLD"))
+    
+    @property
+    def FIRE(self) -> type_builder.EnumValueViewer:
+        return type_builder.EnumValueViewer(self.__bldr.value("FIRE"))
+    
+    @property
+    def FORCE(self) -> type_builder.EnumValueViewer:
+        return type_builder.EnumValueViewer(self.__bldr.value("FORCE"))
+    
+    @property
+    def LIGHTNING(self) -> type_builder.EnumValueViewer:
+        return type_builder.EnumValueViewer(self.__bldr.value("LIGHTNING"))
+    
+    @property
+    def NECROTIC(self) -> type_builder.EnumValueViewer:
+        return type_builder.EnumValueViewer(self.__bldr.value("NECROTIC"))
+    
+    @property
+    def PIERCING(self) -> type_builder.EnumValueViewer:
+        return type_builder.EnumValueViewer(self.__bldr.value("PIERCING"))
+    
+    @property
+    def POISON(self) -> type_builder.EnumValueViewer:
+        return type_builder.EnumValueViewer(self.__bldr.value("POISON"))
+    
+    @property
+    def PSYCHIC(self) -> type_builder.EnumValueViewer:
+        return type_builder.EnumValueViewer(self.__bldr.value("PSYCHIC"))
+    
+    @property
+    def RADIANT(self) -> type_builder.EnumValueViewer:
+        return type_builder.EnumValueViewer(self.__bldr.value("RADIANT"))
+    
+    @property
+    def SLASHING(self) -> type_builder.EnumValueViewer:
+        return type_builder.EnumValueViewer(self.__bldr.value("SLASHING"))
+    
+    @property
+    def THUNDER(self) -> type_builder.EnumValueViewer:
+        return type_builder.EnumValueViewer(self.__bldr.value("THUNDER"))
+    
+    
+
 
 class RollModeAst:
     def __init__(self, tb: type_builder.TypeBuilder):
@@ -98,10 +258,217 @@ class RollModeValues:
     
 
 
+class SaveAbilityAst:
+    def __init__(self, tb: type_builder.TypeBuilder):
+        _tb = tb._tb # type: ignore (we know how to use this private attribute)
+        self._bldr = _tb.enum("SaveAbility")
+        self._values: typing.Set[str] = set([  "STR",  "DEX",  "CON",  "INT",  "WIS",  "CHA",  ])
+        self._vals = SaveAbilityValues(self._bldr, self._values)
+
+    def type(self) -> baml_py.FieldType:
+        return self._bldr.field()
+
+    @property
+    def values(self) -> "SaveAbilityValues":
+        return self._vals
+
+
+class SaveAbilityViewer(SaveAbilityAst):
+    def __init__(self, tb: type_builder.TypeBuilder):
+        super().__init__(tb)
+
+    
+    def list_values(self) -> typing.List[typing.Tuple[str, type_builder.EnumValueViewer]]:
+        return [(name, type_builder.EnumValueViewer(self._bldr.value(name))) for name in self._values]
+    
+
+class SaveAbilityValues:
+    def __init__(self, enum_bldr: baml_py.EnumBuilder, values: typing.Set[str]):
+        self.__bldr = enum_bldr
+        self.__values = values # type: ignore (we know how to use this private attribute) # noqa: F821
+
+    
+    
+    @property
+    def STR(self) -> type_builder.EnumValueViewer:
+        return type_builder.EnumValueViewer(self.__bldr.value("STR"))
+    
+    @property
+    def DEX(self) -> type_builder.EnumValueViewer:
+        return type_builder.EnumValueViewer(self.__bldr.value("DEX"))
+    
+    @property
+    def CON(self) -> type_builder.EnumValueViewer:
+        return type_builder.EnumValueViewer(self.__bldr.value("CON"))
+    
+    @property
+    def INT(self) -> type_builder.EnumValueViewer:
+        return type_builder.EnumValueViewer(self.__bldr.value("INT"))
+    
+    @property
+    def WIS(self) -> type_builder.EnumValueViewer:
+        return type_builder.EnumValueViewer(self.__bldr.value("WIS"))
+    
+    @property
+    def CHA(self) -> type_builder.EnumValueViewer:
+        return type_builder.EnumValueViewer(self.__bldr.value("CHA"))
+    
+    
+
+
 
 # #########################################################################
-# Generated classes 2
+# Generated classes 6
 # #########################################################################
+
+class CharacterSheetIngestionErrorAst:
+    def __init__(self, tb: type_builder.TypeBuilder):
+        _tb = tb._tb # type: ignore (we know how to use this private attribute)
+        self._bldr = _tb.class_("CharacterSheetIngestionError")
+        self._properties: typing.Set[str] = set([  "type",  "message",  "metadata",  ])
+        self._props = CharacterSheetIngestionErrorProperties(self._bldr, self._properties)
+
+    def type(self) -> baml_py.FieldType:
+        return self._bldr.field()
+
+    @property
+    def props(self) -> "CharacterSheetIngestionErrorProperties":
+        return self._props
+
+
+class CharacterSheetIngestionErrorViewer(CharacterSheetIngestionErrorAst):
+    def __init__(self, tb: type_builder.TypeBuilder):
+        super().__init__(tb)
+
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, type_builder.ClassPropertyViewer]]:
+        return [(name, type_builder.ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
+    
+
+
+class CharacterSheetIngestionErrorProperties:
+    def __init__(self, bldr: baml_py.ClassBuilder, properties: typing.Set[str]):
+        self.__bldr = bldr
+        self.__properties = properties # type: ignore (we know how to use this private attribute) # noqa: F821
+
+    
+    
+    @property
+    def type(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("type"))
+    
+    @property
+    def message(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("message"))
+    
+    @property
+    def metadata(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("metadata"))
+    
+    
+
+
+class CharacterSheetIngestionResultAst:
+    def __init__(self, tb: type_builder.TypeBuilder):
+        _tb = tb._tb # type: ignore (we know how to use this private attribute)
+        self._bldr = _tb.class_("CharacterSheetIngestionResult")
+        self._properties: typing.Set[str] = set([  "ingested",  "errors",  ])
+        self._props = CharacterSheetIngestionResultProperties(self._bldr, self._properties)
+
+    def type(self) -> baml_py.FieldType:
+        return self._bldr.field()
+
+    @property
+    def props(self) -> "CharacterSheetIngestionResultProperties":
+        return self._props
+
+
+class CharacterSheetIngestionResultViewer(CharacterSheetIngestionResultAst):
+    def __init__(self, tb: type_builder.TypeBuilder):
+        super().__init__(tb)
+
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, type_builder.ClassPropertyViewer]]:
+        return [(name, type_builder.ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
+    
+
+
+class CharacterSheetIngestionResultProperties:
+    def __init__(self, bldr: baml_py.ClassBuilder, properties: typing.Set[str]):
+        self.__bldr = bldr
+        self.__properties = properties # type: ignore (we know how to use this private attribute) # noqa: F821
+
+    
+    
+    @property
+    def ingested(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("ingested"))
+    
+    @property
+    def errors(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("errors"))
+    
+    
+
+
+class CharacterSheetIngestionSummaryAst:
+    def __init__(self, tb: type_builder.TypeBuilder):
+        _tb = tb._tb # type: ignore (we know how to use this private attribute)
+        self._bldr = _tb.class_("CharacterSheetIngestionSummary")
+        self._properties: typing.Set[str] = set([  "user_message",  "ingested",  "has_warnings",  "critical_error",  "missing_items",  "missing_spells",  ])
+        self._props = CharacterSheetIngestionSummaryProperties(self._bldr, self._properties)
+
+    def type(self) -> baml_py.FieldType:
+        return self._bldr.field()
+
+    @property
+    def props(self) -> "CharacterSheetIngestionSummaryProperties":
+        return self._props
+
+
+class CharacterSheetIngestionSummaryViewer(CharacterSheetIngestionSummaryAst):
+    def __init__(self, tb: type_builder.TypeBuilder):
+        super().__init__(tb)
+
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, type_builder.ClassPropertyViewer]]:
+        return [(name, type_builder.ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
+    
+
+
+class CharacterSheetIngestionSummaryProperties:
+    def __init__(self, bldr: baml_py.ClassBuilder, properties: typing.Set[str]):
+        self.__bldr = bldr
+        self.__properties = properties # type: ignore (we know how to use this private attribute) # noqa: F821
+
+    
+    
+    @property
+    def user_message(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("user_message"))
+    
+    @property
+    def ingested(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("ingested"))
+    
+    @property
+    def has_warnings(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("has_warnings"))
+    
+    @property
+    def critical_error(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("critical_error"))
+    
+    @property
+    def missing_items(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("missing_items"))
+    
+    @property
+    def missing_spells(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("missing_spells"))
+    
+    
+
 
 class DiceTermAst:
     def __init__(self, tb: type_builder.TypeBuilder):
@@ -197,6 +564,101 @@ class RollPlanProperties:
     @property
     def label(self) -> type_builder.ClassPropertyViewer:
         return type_builder.ClassPropertyViewer(self.__bldr.property("label"))
+    
+    
+
+
+class SpellInsertRowAst:
+    def __init__(self, tb: type_builder.TypeBuilder):
+        _tb = tb._tb # type: ignore (we know how to use this private attribute)
+        self._bldr = _tb.class_("SpellInsertRow")
+        self._properties: typing.Set[str] = set([  "spell_name",  "level",  "cast_time",  "range",  "duration",  "damage",  "damage_type",  "is_elemental",  "save_ability",  "component_verbal",  "component_somatic",  "component_material",  "material_components",  "is_ritual",  "details",  ])
+        self._props = SpellInsertRowProperties(self._bldr, self._properties)
+
+    def type(self) -> baml_py.FieldType:
+        return self._bldr.field()
+
+    @property
+    def props(self) -> "SpellInsertRowProperties":
+        return self._props
+
+
+class SpellInsertRowViewer(SpellInsertRowAst):
+    def __init__(self, tb: type_builder.TypeBuilder):
+        super().__init__(tb)
+
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, type_builder.ClassPropertyViewer]]:
+        return [(name, type_builder.ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
+    
+
+
+class SpellInsertRowProperties:
+    def __init__(self, bldr: baml_py.ClassBuilder, properties: typing.Set[str]):
+        self.__bldr = bldr
+        self.__properties = properties # type: ignore (we know how to use this private attribute) # noqa: F821
+
+    
+    
+    @property
+    def spell_name(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("spell_name"))
+    
+    @property
+    def level(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("level"))
+    
+    @property
+    def cast_time(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("cast_time"))
+    
+    @property
+    def range(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("range"))
+    
+    @property
+    def duration(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("duration"))
+    
+    @property
+    def damage(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("damage"))
+    
+    @property
+    def damage_type(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("damage_type"))
+    
+    @property
+    def is_elemental(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("is_elemental"))
+    
+    @property
+    def save_ability(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("save_ability"))
+    
+    @property
+    def component_verbal(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("component_verbal"))
+    
+    @property
+    def component_somatic(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("component_somatic"))
+    
+    @property
+    def component_material(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("component_material"))
+    
+    @property
+    def material_components(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("material_components"))
+    
+    @property
+    def is_ritual(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("is_ritual"))
+    
+    @property
+    def details(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("details"))
     
     
 

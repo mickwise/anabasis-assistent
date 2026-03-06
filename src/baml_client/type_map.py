@@ -16,13 +16,31 @@ from . import stream_types
 
 type_map = {
 
+    "types.CharacterSheetIngestionError": types.CharacterSheetIngestionError,
+    "stream_types.CharacterSheetIngestionError": stream_types.CharacterSheetIngestionError,
+
+    "types.CharacterSheetIngestionResult": types.CharacterSheetIngestionResult,
+    "stream_types.CharacterSheetIngestionResult": stream_types.CharacterSheetIngestionResult,
+
+    "types.CharacterSheetIngestionSummary": types.CharacterSheetIngestionSummary,
+    "stream_types.CharacterSheetIngestionSummary": stream_types.CharacterSheetIngestionSummary,
+
     "types.DiceTerm": types.DiceTerm,
     "stream_types.DiceTerm": stream_types.DiceTerm,
 
     "types.RollPlan": types.RollPlan,
     "stream_types.RollPlan": stream_types.RollPlan,
 
+    "types.SpellInsertRow": types.SpellInsertRow,
+    "stream_types.SpellInsertRow": stream_types.SpellInsertRow,
+
+
+    "types.CharacterSheetIngestionErrorType": types.CharacterSheetIngestionErrorType,
+
+    "types.DamageType": types.DamageType,
 
     "types.RollMode": types.RollMode,
+
+    "types.SaveAbility": types.SaveAbility,
 
 }

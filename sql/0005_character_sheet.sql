@@ -16,7 +16,6 @@
 --   - Primary key: character_sheet_id.
 --   - Checks:
 --       * experience_points is nonnegative
---       * level is NULL or in 1..20
 --       * currency fields are nonnegative
 --       * death saves are NULL or in 0..3
 --       * equipment_item_ids cardinality is bounded (<= 200)
@@ -30,18 +29,20 @@ CREATE TABLE IF NOT EXISTS character_sheet (
     -- Surrogate primary key for this character sheet row.
     character_sheet_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
-    -- ======================
+    -- ========
     -- Identity
-    -- ======================
+    -- ========
 
     -- Character name.
     character_name TEXT NOT NULL,
 
-    -- Class name (e.g., "Wizard").
-    class_name TEXT,
+    -- Class levels map: JSON object where keys are class names and values are
+    -- integer levels for that class (e.g., {"Wizard": 3, "Fighter": 1}).
+    class_levels JSONB NOT NULL DEFAULT '{}'::JSONB,
 
-    -- Level (1..20).
-    level SMALLINT,
+    -- Class subclasses map: JSON object where keys are class names and values
+    -- are subclass names for that class (e.g., {"Wizard": "Evocation"}).
+    class_subclasses JSONB NOT NULL DEFAULT '{}'::JSONB,
 
     -- Background.
     background TEXT,
@@ -80,9 +81,9 @@ CREATE TABLE IF NOT EXISTS character_sheet (
     -- Charisma score.
     charisma_score INTEGER,
 
-    -- ==================
+    -- ======
     -- Combat
-    -- ==================
+    -- ======
 
     -- Armor Class.
     armor_class INTEGER,
@@ -96,8 +97,8 @@ CREATE TABLE IF NOT EXISTS character_sheet (
     -- Proficiency bonus.
     proficiency_bonus INTEGER,
 
-    -- Inspiration checkbox.
-    inspiration BOOLEAN NOT NULL DEFAULT FALSE,
+    -- Inspiration points (0 = none; positive integers allowed).
+    inspiration INTEGER NOT NULL DEFAULT 0,
 
     -- ==========
     -- Hit points
@@ -110,23 +111,23 @@ CREATE TABLE IF NOT EXISTS character_sheet (
     current_hit_points INTEGER,
 
     -- Temporary hit points.
-    temporary_hit_points INTEGER,
+    temporary_hit_points INTEGER NOT NULL DEFAULT 0,
 
     -- =====================
     -- Hit dice / death saves
     -- =====================
 
-    -- Hit dice total text (e.g., "3d8").
-    hit_dice_total TEXT,
+    -- Hit dice totals per class (e.g., {"3d8", "1d10"}).
+    hit_dice_total TEXT [],
 
-    -- Hit dice current text.
-    hit_dice_current TEXT,
+    -- Hit dice current per class (e.g., {"2d8", "1d10"}).
+    hit_dice_current TEXT [],
 
     -- Death saves successes (0..3).
-    death_saves_successes INTEGER,
+    death_saves_successes INTEGER NOT NULL DEFAULT 0,
 
     -- Death saves failures (0..3).
-    death_saves_failures INTEGER,
+    death_saves_failures INTEGER NOT NULL DEFAULT 0,
 
     -- =========
     -- Currency
@@ -186,9 +187,9 @@ CREATE TABLE IF NOT EXISTS character_sheet (
     -- Equipment item ids (references items.item_id).
     equipment_item_ids UUID [] NOT NULL DEFAULT '{}'::UUID [],
 
-    -- ==========================
+    -- =========
     -- Narrative
-    -- ==========================
+    -- =========
 
     -- Age.
     age TEXT,
@@ -208,9 +209,9 @@ CREATE TABLE IF NOT EXISTS character_sheet (
     -- Hair.
     hair TEXT,
 
-    -- ======================
+    -- =========
     -- Narrative
-    -- ======================
+    -- =========
 
     -- Character appearance.
     character_appearance TEXT,
@@ -224,15 +225,12 @@ CREATE TABLE IF NOT EXISTS character_sheet (
     -- Allies and organizations.
     allies_and_organizations TEXT,
 
-    -- Symbol.
-    symbol TEXT,
-
     -- Additional features and traits.
     additional_features_and_traits TEXT,
 
-    -- =================
+    -- ==============
     -- Related tables
-    -- =================
+    -- ==============
 
     -- Pointer to player_skills(skills_id).
     skills_id UUID REFERENCES player_skills (skills_id),
@@ -259,11 +257,6 @@ CREATE TABLE IF NOT EXISTS character_sheet (
         experience_points >= 0
     ),
 
-    CONSTRAINT character_sheet_chk_level_range
-    CHECK (
-        level IS NULL OR (level BETWEEN 1 AND 20)
-    ),
-
     CONSTRAINT character_sheet_chk_currency_nonnegative
     CHECK (
         copper_pieces >= 0
@@ -271,6 +264,11 @@ CREATE TABLE IF NOT EXISTS character_sheet (
         AND electrum_pieces >= 0
         AND gold_pieces >= 0
         AND platinum_pieces >= 0
+    ),
+
+    CONSTRAINT character_sheet_chk_inspiration_nonnegative
+    CHECK (
+        inspiration >= 0
     ),
 
     CONSTRAINT character_sheet_chk_death_saves_range
@@ -301,11 +299,11 @@ COMMENT ON COLUMN character_sheet.character_sheet_id IS
 COMMENT ON COLUMN character_sheet.character_name IS
 'Character name (page 1 header).';
 
-COMMENT ON COLUMN character_sheet.class_name IS
-'Class name (page 1 header).';
+COMMENT ON COLUMN character_sheet.class_levels IS
+'JSON object mapping class names to levels (supports multiclass).';
 
-COMMENT ON COLUMN character_sheet.level IS
-'Character level (1..20) (page 1 header).';
+COMMENT ON COLUMN character_sheet.class_subclasses IS
+'JSON object mapping class names to subclass names (supports multiclass).';
 
 COMMENT ON COLUMN character_sheet.background IS
 'Background (page 1 header).';
@@ -353,7 +351,7 @@ COMMENT ON COLUMN character_sheet.proficiency_bonus IS
 'Proficiency bonus (page 1 combat block).';
 
 COMMENT ON COLUMN character_sheet.inspiration IS
-'Inspiration checkbox.';
+'Inspiration points (0 = none; nonnegative integer).';
 
 COMMENT ON COLUMN character_sheet.hit_point_maximum IS
 'Hit point maximum.';
@@ -362,19 +360,19 @@ COMMENT ON COLUMN character_sheet.current_hit_points IS
 'Current hit points.';
 
 COMMENT ON COLUMN character_sheet.temporary_hit_points IS
-'Temporary hit points.';
+'Temporary hit points (defaults to 0).';
 
 COMMENT ON COLUMN character_sheet.hit_dice_total IS
-'Hit dice total text.';
+'Hit dice totals per class (TEXT[]; e.g., {"3d8","1d10"}).';
 
 COMMENT ON COLUMN character_sheet.hit_dice_current IS
-'Hit dice current text.';
+'Hit dice current per class (TEXT[]; e.g., {"2d8","1d10"}).';
 
 COMMENT ON COLUMN character_sheet.death_saves_successes IS
-'Death saves successes (0..3).';
+'Death saves successes (0..3; defaults to 0).';
 
 COMMENT ON COLUMN character_sheet.death_saves_failures IS
-'Death saves failures (0..3).';
+'Death saves failures (0..3; defaults to 0).';
 
 COMMENT ON COLUMN character_sheet.copper_pieces IS
 'Currency: CP.';
@@ -447,9 +445,6 @@ COMMENT ON COLUMN character_sheet.treasure IS
 
 COMMENT ON COLUMN character_sheet.allies_and_organizations IS
 'Allies and organizations box.';
-
-COMMENT ON COLUMN character_sheet.symbol IS
-'Symbol box.';
 
 COMMENT ON COLUMN character_sheet.additional_features_and_traits IS
 'Additional features and traits box.';

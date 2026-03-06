@@ -94,6 +94,20 @@ class BamlSyncClient:
     def parse_stream(self):
       return self.__llm_stream_parser
 
+    def ParseSpellSource(self, source_ref: str,hint: typing.Optional[str] = None,
+        baml_options: BamlCallOptions = {},
+    ) -> types.SpellInsertRow:
+        # Check if on_tick is provided
+        if 'on_tick' in baml_options:
+            __stream__ = self.stream.ParseSpellSource(source_ref=source_ref,hint=hint,
+                baml_options=baml_options)
+            return __stream__.get_final_response()
+        else:
+            # Original non-streaming code
+            __result__ = self.__options.merge_options(baml_options).call_function_sync(function_name="ParseSpellSource", args={
+                "source_ref": source_ref,"hint": hint,
+            })
+            return typing.cast(types.SpellInsertRow, __result__.cast_to(types, types, stream_types, False, __runtime__))
     def Roll(self, request: str,context: typing.Optional[str] = None,
         baml_options: BamlCallOptions = {},
     ) -> types.RollPlan:
@@ -108,6 +122,20 @@ class BamlSyncClient:
                 "request": request,"context": context,
             })
             return typing.cast(types.RollPlan, __result__.cast_to(types, types, stream_types, False, __runtime__))
+    def SummarizeCharacterSheetIngestion(self, result: types.CharacterSheetIngestionResult,
+        baml_options: BamlCallOptions = {},
+    ) -> types.CharacterSheetIngestionSummary:
+        # Check if on_tick is provided
+        if 'on_tick' in baml_options:
+            __stream__ = self.stream.SummarizeCharacterSheetIngestion(result=result,
+                baml_options=baml_options)
+            return __stream__.get_final_response()
+        else:
+            # Original non-streaming code
+            __result__ = self.__options.merge_options(baml_options).call_function_sync(function_name="SummarizeCharacterSheetIngestion", args={
+                "result": result,
+            })
+            return typing.cast(types.CharacterSheetIngestionSummary, __result__.cast_to(types, types, stream_types, False, __runtime__))
     
 
 
@@ -117,6 +145,18 @@ class BamlStreamClient:
     def __init__(self, options: DoNotUseDirectlyCallManager):
         self.__options = options
 
+    def ParseSpellSource(self, source_ref: str,hint: typing.Optional[str] = None,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.BamlSyncStream[stream_types.SpellInsertRow, types.SpellInsertRow]:
+        __ctx__, __result__ = self.__options.merge_options(baml_options).create_sync_stream(function_name="ParseSpellSource", args={
+            "source_ref": source_ref,"hint": hint,
+        })
+        return baml_py.BamlSyncStream[stream_types.SpellInsertRow, types.SpellInsertRow](
+          __result__,
+          lambda x: typing.cast(stream_types.SpellInsertRow, x.cast_to(types, types, stream_types, True, __runtime__)),
+          lambda x: typing.cast(types.SpellInsertRow, x.cast_to(types, types, stream_types, False, __runtime__)),
+          __ctx__,
+        )
     def Roll(self, request: str,context: typing.Optional[str] = None,
         baml_options: BamlCallOptions = {},
     ) -> baml_py.BamlSyncStream[stream_types.RollPlan, types.RollPlan]:
@@ -129,6 +169,18 @@ class BamlStreamClient:
           lambda x: typing.cast(types.RollPlan, x.cast_to(types, types, stream_types, False, __runtime__)),
           __ctx__,
         )
+    def SummarizeCharacterSheetIngestion(self, result: types.CharacterSheetIngestionResult,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.BamlSyncStream[stream_types.CharacterSheetIngestionSummary, types.CharacterSheetIngestionSummary]:
+        __ctx__, __result__ = self.__options.merge_options(baml_options).create_sync_stream(function_name="SummarizeCharacterSheetIngestion", args={
+            "result": result,
+        })
+        return baml_py.BamlSyncStream[stream_types.CharacterSheetIngestionSummary, types.CharacterSheetIngestionSummary](
+          __result__,
+          lambda x: typing.cast(stream_types.CharacterSheetIngestionSummary, x.cast_to(types, types, stream_types, True, __runtime__)),
+          lambda x: typing.cast(types.CharacterSheetIngestionSummary, x.cast_to(types, types, stream_types, False, __runtime__)),
+          __ctx__,
+        )
     
 
 class BamlHttpRequestClient:
@@ -137,11 +189,25 @@ class BamlHttpRequestClient:
     def __init__(self, options: DoNotUseDirectlyCallManager):
         self.__options = options
 
+    def ParseSpellSource(self, source_ref: str,hint: typing.Optional[str] = None,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.baml_py.HTTPRequest:
+        __result__ = self.__options.merge_options(baml_options).create_http_request_sync(function_name="ParseSpellSource", args={
+            "source_ref": source_ref,"hint": hint,
+        }, mode="request")
+        return __result__
     def Roll(self, request: str,context: typing.Optional[str] = None,
         baml_options: BamlCallOptions = {},
     ) -> baml_py.baml_py.HTTPRequest:
         __result__ = self.__options.merge_options(baml_options).create_http_request_sync(function_name="Roll", args={
             "request": request,"context": context,
+        }, mode="request")
+        return __result__
+    def SummarizeCharacterSheetIngestion(self, result: types.CharacterSheetIngestionResult,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.baml_py.HTTPRequest:
+        __result__ = self.__options.merge_options(baml_options).create_http_request_sync(function_name="SummarizeCharacterSheetIngestion", args={
+            "result": result,
         }, mode="request")
         return __result__
     
@@ -152,11 +218,25 @@ class BamlHttpStreamRequestClient:
     def __init__(self, options: DoNotUseDirectlyCallManager):
         self.__options = options
 
+    def ParseSpellSource(self, source_ref: str,hint: typing.Optional[str] = None,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.baml_py.HTTPRequest:
+        __result__ = self.__options.merge_options(baml_options).create_http_request_sync(function_name="ParseSpellSource", args={
+            "source_ref": source_ref,"hint": hint,
+        }, mode="stream")
+        return __result__
     def Roll(self, request: str,context: typing.Optional[str] = None,
         baml_options: BamlCallOptions = {},
     ) -> baml_py.baml_py.HTTPRequest:
         __result__ = self.__options.merge_options(baml_options).create_http_request_sync(function_name="Roll", args={
             "request": request,"context": context,
+        }, mode="stream")
+        return __result__
+    def SummarizeCharacterSheetIngestion(self, result: types.CharacterSheetIngestionResult,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.baml_py.HTTPRequest:
+        __result__ = self.__options.merge_options(baml_options).create_http_request_sync(function_name="SummarizeCharacterSheetIngestion", args={
+            "result": result,
         }, mode="stream")
         return __result__
     

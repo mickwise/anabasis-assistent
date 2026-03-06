@@ -37,8 +37,52 @@ def get_checks(checks: typing.Dict[CheckName, Check]) -> typing.List[Check]:
 def all_succeeded(checks: typing.Dict[CheckName, Check]) -> bool:
     return all(check.status == "succeeded" for check in get_checks(checks))
 # #########################################################################
-# Generated enums (1)
+# Generated enums (4)
 # #########################################################################
+
+class CharacterSheetIngestionErrorType(str, Enum):
+    # CharacterSheetIngestionErrorType
+# 
+# Purpose
+# -------
+# Categorizes deterministic ingestion issues into critical failures and
+# non-critical warnings.
+# 
+# Variants
+# --------
+# - UnsupportedPDFSchema: critical; the uploaded PDF template cannot be
+# parsed.
+# - ItemNotFound: warning; some parsed equipment items were not found in DB.
+# - SpellNotFound: warning; some parsed spells were not found in DB.
+# 
+# Notes
+# -----
+# Host code defines which conditions produce each variant.
+    UnsupportedPDFSchema = "UnsupportedPDFSchema"
+    ItemNotFound = "ItemNotFound"
+    SpellNotFound = "SpellNotFound"
+
+class DamageType(str, Enum):
+    # Purpose
+# -------
+# Enumerated damage types allowed by the `spells.damage_type` CHECK constraint.
+# 
+# Notes
+# -----
+# - Values are uppercase to match the host-side enum mapping expectations.
+    ACID = "ACID"
+    BLUDGEONING = "BLUDGEONING"
+    COLD = "COLD"
+    FIRE = "FIRE"
+    FORCE = "FORCE"
+    LIGHTNING = "LIGHTNING"
+    NECROTIC = "NECROTIC"
+    PIERCING = "PIERCING"
+    POISON = "POISON"
+    PSYCHIC = "PSYCHIC"
+    RADIANT = "RADIANT"
+    SLASHING = "SLASHING"
+    THUNDER = "THUNDER"
 
 class RollMode(str, Enum):
     # RollMode
@@ -64,9 +108,105 @@ class RollMode(str, Enum):
     ADVANTAGE = "ADVANTAGE"
     DISADVANTAGE = "DISADVANTAGE"
 
+class SaveAbility(str, Enum):
+    # Purpose
+# -------
+# Enumerated save abilities allowed by the `spells.save_ability` CHECK constraint.
+# 
+# Notes
+# -----
+# - Values are uppercase and represent the six standard ability scores.
+    STR = "STR"
+    DEX = "DEX"
+    CON = "CON"
+    INT = "INT"
+    WIS = "WIS"
+    CHA = "CHA"
+
 # #########################################################################
-# Generated classes (2)
+# Generated classes (6)
 # #########################################################################
+
+class CharacterSheetIngestionError(BaseModel):
+    # CharacterSheetIngestionError
+    # 
+    # Purpose
+    # -------
+    # Encodes a single ingestion error or warning emitted by deterministic host
+    # code.
+    # 
+    # Fields
+    # ------
+    # - type: categorized error type.
+    # - message: human-readable detail produced by host code.
+    # - metadata: optional list payload used for structured followups (for example,
+    # missing item names).
+    # 
+    # Notes
+    # -----
+    # The LLM must not invent new errors; it may only summarize these.
+
+    type: CharacterSheetIngestionErrorType = Field(description='Machine-readable category for this issue (critical vs warning).')
+    message: str = Field(description='Human-readable detail produced by host code; used for summarization.')
+    metadata: typing.Optional[typing.List[str]] = Field(default=None, description='Optional list payload (e.g., missing item/spell names) for structured reporting.')
+
+class CharacterSheetIngestionResult(BaseModel):
+    # CharacterSheetIngestionResult
+    # 
+    # Purpose
+    # -------
+    # Represents the deterministic host runtime outcome of attempting to ingest a
+    # single character-sheet PDF.
+    # 
+    # Fields
+    # ------
+    # - ingested: true if and only if the sheet was ingested successfully enough
+    # to persist core character data.
+    # - errors: optional list of structured errors and warnings.
+    # 
+    # Invariants
+    # ----------
+    # - If any error has type UnsupportedPDFSchema, then ingested must be false.
+    # - ItemNotFound and SpellNotFound do not imply ingested=false.
+    # 
+    # Notes
+    # -----
+    # This object is produced by deterministic host code, not by the LLM.
+
+    ingested: bool = Field(description='True iff the host deterministically ingested core character data; false only for critical failures like unsupported schema.')
+    errors: typing.Optional[typing.List["CharacterSheetIngestionError"]] = Field(default=None, description='Optional list of structured errors/warnings emitted by deterministic host ingestion.')
+
+class CharacterSheetIngestionSummary(BaseModel):
+    # CharacterSheetIngestionSummary
+    # 
+    # Purpose
+    # -------
+    # User-facing summary derived from a deterministic ingestion result.
+    # 
+    # Fields
+    # ------
+    # - user_message: short Discord-ready message summarizing success/warnings.
+    # - ingested: mirrors the deterministic result.ingested.
+    # - has_warnings: true iff there exists any non-critical warning.
+    # - critical_error: true iff any error is UnsupportedPDFSchema.
+    # - missing_items: optional aggregated list of missing item names.
+    # - missing_spells: optional aggregated list of missing spell names.
+    # 
+    # Invariants
+    # ----------
+    # - critical_error is true iff any error has type UnsupportedPDFSchema.
+    # - has_warnings is true iff any error has a non-critical type.
+    # 
+    # Notes
+    # -----
+    # This is the object the bot should use to format responses and UI.
+
+    user_message: str = Field(description='Discord-ready summary message derived from the deterministic result.')
+    ingested: bool = Field(description='Mirrors the deterministic result.ingested.')
+    has_warnings: bool = Field(description='True iff any non-critical warnings exist (ItemNotFound/SpellNotFound).')
+    critical_error: bool = Field(description='True iff any error is UnsupportedPDFSchema; implies ingested=false.')
+    missing_items: typing.Optional[typing.List[str]] = Field(default=None, description='Aggregated list of equipment/item names missing from the database, if provided by metadata.')
+    missing_spells: typing.Optional[typing.List[str]] = Field(default=None, description='Aggregated list of spell names missing from the database, if provided by metadata.')
 
 class DiceTerm(BaseModel):
     # DiceTerm
@@ -122,6 +262,57 @@ class RollPlan(BaseModel):
     repeat: int
     mode: RollMode
     label: typing.Optional[str] = None
+
+class SpellInsertRow(BaseModel):
+    # Purpose
+    # -------
+    # Represents one insertable record matching the Postgres `spells` table columns.
+    # The host should insert exactly one row per parsed spell.
+    # 
+    # Fields
+    # ------
+    # - spell_name: spell name as printed in the source (non-empty)
+    # - level: integer in [0, 9] (use 0 for cantrips)
+    # - cast_time: human-readable casting time (non-empty)
+    # - range: human-readable range (non-empty)
+    # - duration: human-readable duration (non-empty)
+    # - damage: dice expression (e.g., "3d8", "1d4+1") or null if not specified
+    # - damage_type: one of DamageType or null if not specified
+    # - is_elemental: true only for elemental damage types (see invariants)
+    # - save_ability: one of SaveAbility or null if no saving throw
+    # - component_verbal/component_somatic/component_material: V/S/M flags
+    # - material_components: raw material text if present; else null
+    # - is_ritual: true if the spell is marked as ritual
+    # - details: non-empty summary + rules text (best effort)
+    # 
+    # Invariants
+    # ----------
+    # - `level` must be within [0, 9].
+    # - At least one of component_verbal/component_somatic/component_material is true.
+    # - If component_material is false then material_components must be null.
+    # - If is_elemental is true, damage_type must be one of:
+    # ACID, COLD, FIRE, LIGHTNING, POISON, THUNDER.
+    # - If damage_type is null, is_elemental must be false.
+    # 
+    # Notes
+    # -----
+    # - Nullable fields mirror nullable DB columns and must not be fabricated.
+
+    spell_name: str = Field(description='Spell title as printed at the top of the block (e.g., \'Arms of Hadar\'). Copy exact capitalization/punctuation.')
+    level: int = Field(description='Spell level parsed from the header line like \'1st-level conjuration\'. Use 0 if the header says \'cantrip\'.')
+    cast_time: str = Field(description='Value on the \'Casting Time:\' line (e.g., \'1 action\', \'1 bonus action\', \'1 reaction, which you take when ...\'). Copy as written.')
+    range: str = Field(description='Value on the \'Range:\' line (e.g., \'Self (10-foot radius)\', \'60 feet\', \'Touch\'). Copy as written.')
+    duration: str = Field(description='Value on the \'Duration:\' line (e.g., \'Instantaneous\', \'Concentration, up to 1 minute\'). Copy as written.')
+    damage: typing.Optional[str] = Field(default=None, description='Dice expression for primary damage if explicitly stated (e.g., \'2d6\', \'1d4+1\'). Extract from rules text like \'takes 2d6 necrotic damage\'. Null if no damage dice are specified.')
+    damage_type: typing.Optional[DamageType] = Field(default=None, description='Damage type associated with `damage` when present (e.g., \'necrotic\' -> NECROTIC). Null if no damage type is specified or if `damage` is null.')
+    is_elemental: bool = Field(description='True only when `damage_type` is one of ACID/COLD/FIRE/LIGHTNING/POISON/THUNDER. Otherwise false (including when `damage_type` is null).')
+    save_ability: typing.Optional[SaveAbility] = Field(default=None, description='Set if the spell text says the target must make an ability saving throw (e.g., \'Strength saving throw\' -> STR). Null if there is no saving throw.')
+    component_verbal: bool = Field(description='True if the \'Components:\' line includes \'V\'. Example: \'Components: V, S\' -> true.')
+    component_somatic: bool = Field(description='True if the \'Components:\' line includes \'S\'. Example: \'Components: V, S\' -> true.')
+    component_material: bool = Field(description='True if the \'Components:\' line includes \'M\'. If the block shows materials in parentheses, set this true.')
+    material_components: typing.Optional[str] = Field(default=None, description='If component_material is true and the block lists materials (usually in parentheses after \'M\'), copy that materials text verbatim (without inventing). Null if no materials text is visible.')
+    is_ritual: bool = Field(description='True if the header or component line marks the spell as a ritual (often \'(ritual)\' next to the level/school). Otherwise false.')
+    details: str = Field(description='Non-empty: include (1) a 2–5 sentence mechanical summary and (2) the visible rules text best-effort. Must include an explicit \'At Higher Levels:\' paragraph if present.')
 
 # #########################################################################
 # Generated type aliases (0)
