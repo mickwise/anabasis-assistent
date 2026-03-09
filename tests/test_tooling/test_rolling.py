@@ -32,7 +32,7 @@ import pytest
 
 from baml_client.types import RollPlan
 
-from tools import rolling
+from tools.rolling import rolling
 
 
 @dataclass(frozen=True)
