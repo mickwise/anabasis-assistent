@@ -97,7 +97,7 @@ client<llm> CustomHaiku {
    provider openai-generic
    options {
      base_url "http://localhost:11434/v1"
-     model "llama4"
+     model "qwen3.5"
      default_role "user"
    }
 }

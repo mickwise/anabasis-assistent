@@ -28,11 +28,17 @@ type_map = {
     "types.DiceTerm": types.DiceTerm,
     "stream_types.DiceTerm": stream_types.DiceTerm,
 
+    "types.PlannerDecision": types.PlannerDecision,
+    "stream_types.PlannerDecision": stream_types.PlannerDecision,
+
     "types.RollPlan": types.RollPlan,
     "stream_types.RollPlan": stream_types.RollPlan,
 
     "types.SpellInsertRow": types.SpellInsertRow,
     "stream_types.SpellInsertRow": stream_types.SpellInsertRow,
+
+    "types.ToolCall": types.ToolCall,
+    "stream_types.ToolCall": stream_types.ToolCall,
 
 
     "types.CharacterSheetIngestionErrorType": types.CharacterSheetIngestionErrorType,

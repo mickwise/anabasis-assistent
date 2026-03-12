@@ -29,6 +29,12 @@ class LlmResponseParser:
         __result__ = self.__options.merge_options(baml_options).parse_response(function_name="ParseSpellSource", llm_response=llm_response, mode="request")
         return typing.cast(types.SpellInsertRow, __result__)
 
+    def PlanDiscordMessage(
+        self, llm_response: str, baml_options: BamlCallOptions = {},
+    ) -> types.PlannerDecision:
+        __result__ = self.__options.merge_options(baml_options).parse_response(function_name="PlanDiscordMessage", llm_response=llm_response, mode="request")
+        return typing.cast(types.PlannerDecision, __result__)
+
     def Roll(
         self, llm_response: str, baml_options: BamlCallOptions = {},
     ) -> types.RollPlan:
@@ -54,6 +60,12 @@ class LlmStreamParser:
     ) -> stream_types.SpellInsertRow:
         __result__ = self.__options.merge_options(baml_options).parse_response(function_name="ParseSpellSource", llm_response=llm_response, mode="stream")
         return typing.cast(stream_types.SpellInsertRow, __result__)
+
+    def PlanDiscordMessage(
+        self, llm_response: str, baml_options: BamlCallOptions = {},
+    ) -> stream_types.PlannerDecision:
+        __result__ = self.__options.merge_options(baml_options).parse_response(function_name="PlanDiscordMessage", llm_response=llm_response, mode="stream")
+        return typing.cast(stream_types.PlannerDecision, __result__)
 
     def Roll(
         self, llm_response: str, baml_options: BamlCallOptions = {},

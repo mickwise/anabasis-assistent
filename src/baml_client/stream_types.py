@@ -23,7 +23,7 @@ class StreamState(BaseModel, typing.Generic[StreamStateValueT]):
     value: StreamStateValueT
     state: typing_extensions.Literal["Pending", "Incomplete", "Complete"]
 # #########################################################################
-# Generated classes (6)
+# Generated classes (8)
 # #########################################################################
 
 class CharacterSheetIngestionError(BaseModel):
@@ -130,6 +130,13 @@ class DiceTerm(BaseModel):
     count: typing.Optional[int] = None
     sides: typing.Optional[int] = None
 
+class PlannerDecision(BaseModel):
+    route: typing.Optional[str] = Field(default=None, description='Planner routing decision: one of \'message_only\', \'clarification\', or \'tool_calls\'.')
+    assistant_message: typing.Optional[str] = Field(default=None, description='Natural-language message to send back immediately when route=\'message_only\'.')
+    needs_clarification: typing.Optional[bool] = Field(default=None, description='True when the planner cannot safely select tools or answer without asking a follow-up question.')
+    clarification_question: typing.Optional[str] = Field(default=None, description='Follow-up question to ask the user when needs_clarification=true and route=\'clarification\'.')
+    tool_calls: typing.List["ToolCall"] = Field(description='Ordered list of tool calls the executor should validate and run when route=\'tool_calls\'.')
+
 class RollPlan(BaseModel):
     # RollPlan
     # 
@@ -212,6 +219,12 @@ class SpellInsertRow(BaseModel):
     material_components: typing.Optional[str] = Field(default=None, description='If component_material is true and the block lists materials (usually in parentheses after \'M\'), copy that materials text verbatim (without inventing). Null if no materials text is visible.')
     is_ritual: typing.Optional[bool] = Field(default=None, description='True if the header or component line marks the spell as a ritual (often \'(ritual)\' next to the level/school). Otherwise false.')
     details: typing.Optional[str] = Field(default=None, description='Non-empty: include (1) a 2–5 sentence mechanical summary and (2) the visible rules text best-effort. Must include an explicit \'At Higher Levels:\' paragraph if present.')
+
+class ToolCall(BaseModel):
+    tool_name: typing.Optional[str] = Field(default=None, description='Name of the downstream tool the executor should invoke (stable identifier, not natural language).')
+    arguments: typing.Optional[str] = Field(default=None, description='Serialized arguments payload for the tool call (typically JSON or another tool-specific encoding).')
+    reason: typing.Optional[str] = Field(default=None, description='Optional brief justification for why this tool call is needed, for debugging and audit logs.')
+    requires_dm_privileges: typing.Optional[bool] = Field(default=None, description='True if this tool call should only be executed when the requester has DM privileges in the current Discord context.')
 
 # #########################################################################
 # Generated type aliases (0)

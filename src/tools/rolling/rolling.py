@@ -5,8 +5,8 @@ Bridge natural-language D&D roll messages to deterministic execution.
 
 Key behaviors
 -------------
-- Calls the generated BAML sync client to parse a free-form message into a typed
-  `RollPlan`.
+- Calls the generated BAML client to parse a free-form message into a typed
+  `RollPlan` (sync and async variants).
 - Executes the returned plan deterministically using a caller-supplied RNG.
 - Returns structured roll outcomes without any narrative formatting.
 
@@ -26,6 +26,7 @@ format the returned structured result into user-facing text elsewhere.
 
 from __future__ import annotations
 
+import asyncio
 import random
 from typing import Any, Dict, List
 
@@ -64,6 +65,39 @@ def parse_message_to_roll_plan(message: str, context: str | None = None) -> Roll
     """
 
     return b.Roll(message, context)
+
+
+async def parse_message_to_roll_plan_async(
+    message: str,
+    context: str | None = None,
+) -> RollPlan:
+    """
+    Parse a natural-language roll message into a RollPlan asynchronously.
+
+    Parameters
+    ----------
+    message : str
+        Free-form roll instruction (e.g., "roll perception +5 at advantage").
+    context : str | None
+        Optional extra information (character sheet bonuses, system notes, etc.).
+
+    Returns
+    -------
+    RollPlan
+        A typed `RollPlan` produced by the generated BAML client.
+
+    Raises
+    ------
+    Exception
+        Propagates any exception raised by the BAML client.
+    """
+    # Keep async call-sites non-blocking while preserving the proven sync
+    # parsing behavior by offloading to a worker thread.
+    return await asyncio.to_thread(
+        parse_message_to_roll_plan,
+        message,
+        context,
+    )
 
 
 def execute_roll_plan(plan: RollPlan, rng: random.Random) -> Dict[str, Any]:
@@ -190,6 +224,41 @@ def roll(
     rng: random.Random = rng if rng else random.Random(RANDOM_SEED)
     plan = parse_message_to_roll_plan(message=message, context=context)
     return execute_roll_plan(plan=plan, rng=rng)
+
+
+async def roll_async(
+    message: str,
+    rng: random.Random | None = None,
+    context: str | None = None,
+) -> Dict[str, Any]:
+    """
+    Parse a message via BAML asynchronously and execute the resulting RollPlan.
+
+    Parameters
+    ----------
+    message : str
+        Natural-language roll message.
+    rng : random.Random | None
+        RNG used for deterministic execution.
+    context : str | None
+        Optional context string forwarded to BAML.
+
+    Returns
+    -------
+    dict
+        Structured roll execution result (see `execute_roll_plan`).
+
+    Raises
+    ------
+    Exception
+        Propagates any exception raised by BAML parsing.
+    ValueError
+        If the parsed plan is invalid.
+    """
+
+    effective_rng: random.Random = rng if rng else random.Random(RANDOM_SEED)
+    plan = await parse_message_to_roll_plan_async(message=message, context=context)
+    return execute_roll_plan(plan=plan, rng=effective_rng)
 
 
 def _roll_term(count: int, sides: int, mode: str, rng: random.Random) -> Dict[str, Any]:

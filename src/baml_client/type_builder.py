@@ -20,7 +20,7 @@ from .globals import DO_NOT_USE_DIRECTLY_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_RUNTIM
 class TypeBuilder(type_builder.TypeBuilder):
     def __init__(self):
         super().__init__(classes=set(
-          ["CharacterSheetIngestionError","CharacterSheetIngestionResult","CharacterSheetIngestionSummary","DiceTerm","RollPlan","SpellInsertRow",]
+          ["CharacterSheetIngestionError","CharacterSheetIngestionResult","CharacterSheetIngestionSummary","DiceTerm","PlannerDecision","RollPlan","SpellInsertRow","ToolCall",]
         ), enums=set(
           ["CharacterSheetIngestionErrorType","DamageType","RollMode","SaveAbility",]
         ), runtime=DO_NOT_USE_DIRECTLY_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_RUNTIME)
@@ -47,7 +47,7 @@ class TypeBuilder(type_builder.TypeBuilder):
 
 
     # #########################################################################
-    # Generated classes 6
+    # Generated classes 8
     # #########################################################################
 
     @property
@@ -67,12 +67,20 @@ class TypeBuilder(type_builder.TypeBuilder):
         return DiceTermViewer(self)
 
     @property
+    def PlannerDecision(self) -> "PlannerDecisionViewer":
+        return PlannerDecisionViewer(self)
+
+    @property
     def RollPlan(self) -> "RollPlanViewer":
         return RollPlanViewer(self)
 
     @property
     def SpellInsertRow(self) -> "SpellInsertRowViewer":
         return SpellInsertRowViewer(self)
+
+    @property
+    def ToolCall(self) -> "ToolCallViewer":
+        return ToolCallViewer(self)
 
 
 
@@ -318,7 +326,7 @@ class SaveAbilityValues:
 
 
 # #########################################################################
-# Generated classes 6
+# Generated classes 8
 # #########################################################################
 
 class CharacterSheetIngestionErrorAst:
@@ -513,6 +521,61 @@ class DiceTermProperties:
     
 
 
+class PlannerDecisionAst:
+    def __init__(self, tb: type_builder.TypeBuilder):
+        _tb = tb._tb # type: ignore (we know how to use this private attribute)
+        self._bldr = _tb.class_("PlannerDecision")
+        self._properties: typing.Set[str] = set([  "route",  "assistant_message",  "needs_clarification",  "clarification_question",  "tool_calls",  ])
+        self._props = PlannerDecisionProperties(self._bldr, self._properties)
+
+    def type(self) -> baml_py.FieldType:
+        return self._bldr.field()
+
+    @property
+    def props(self) -> "PlannerDecisionProperties":
+        return self._props
+
+
+class PlannerDecisionViewer(PlannerDecisionAst):
+    def __init__(self, tb: type_builder.TypeBuilder):
+        super().__init__(tb)
+
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, type_builder.ClassPropertyViewer]]:
+        return [(name, type_builder.ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
+    
+
+
+class PlannerDecisionProperties:
+    def __init__(self, bldr: baml_py.ClassBuilder, properties: typing.Set[str]):
+        self.__bldr = bldr
+        self.__properties = properties # type: ignore (we know how to use this private attribute) # noqa: F821
+
+    
+    
+    @property
+    def route(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("route"))
+    
+    @property
+    def assistant_message(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("assistant_message"))
+    
+    @property
+    def needs_clarification(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("needs_clarification"))
+    
+    @property
+    def clarification_question(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("clarification_question"))
+    
+    @property
+    def tool_calls(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("tool_calls"))
+    
+    
+
+
 class RollPlanAst:
     def __init__(self, tb: type_builder.TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
@@ -659,6 +722,57 @@ class SpellInsertRowProperties:
     @property
     def details(self) -> type_builder.ClassPropertyViewer:
         return type_builder.ClassPropertyViewer(self.__bldr.property("details"))
+    
+    
+
+
+class ToolCallAst:
+    def __init__(self, tb: type_builder.TypeBuilder):
+        _tb = tb._tb # type: ignore (we know how to use this private attribute)
+        self._bldr = _tb.class_("ToolCall")
+        self._properties: typing.Set[str] = set([  "tool_name",  "arguments",  "reason",  "requires_dm_privileges",  ])
+        self._props = ToolCallProperties(self._bldr, self._properties)
+
+    def type(self) -> baml_py.FieldType:
+        return self._bldr.field()
+
+    @property
+    def props(self) -> "ToolCallProperties":
+        return self._props
+
+
+class ToolCallViewer(ToolCallAst):
+    def __init__(self, tb: type_builder.TypeBuilder):
+        super().__init__(tb)
+
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, type_builder.ClassPropertyViewer]]:
+        return [(name, type_builder.ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
+    
+
+
+class ToolCallProperties:
+    def __init__(self, bldr: baml_py.ClassBuilder, properties: typing.Set[str]):
+        self.__bldr = bldr
+        self.__properties = properties # type: ignore (we know how to use this private attribute) # noqa: F821
+
+    
+    
+    @property
+    def tool_name(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("tool_name"))
+    
+    @property
+    def arguments(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("arguments"))
+    
+    @property
+    def reason(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("reason"))
+    
+    @property
+    def requires_dm_privileges(self) -> type_builder.ClassPropertyViewer:
+        return type_builder.ClassPropertyViewer(self.__bldr.property("requires_dm_privileges"))
     
     
 
