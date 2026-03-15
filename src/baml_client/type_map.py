@@ -16,6 +16,12 @@ from . import stream_types
 
 type_map = {
 
+    "types.AttachmentInput": types.AttachmentInput,
+    "stream_types.AttachmentInput": stream_types.AttachmentInput,
+
+    "types.BindingSnapshot": types.BindingSnapshot,
+    "stream_types.BindingSnapshot": stream_types.BindingSnapshot,
+
     "types.CharacterSheetIngestionError": types.CharacterSheetIngestionError,
     "stream_types.CharacterSheetIngestionError": stream_types.CharacterSheetIngestionError,
 
@@ -28,25 +34,75 @@ type_map = {
     "types.DiceTerm": types.DiceTerm,
     "stream_types.DiceTerm": stream_types.DiceTerm,
 
+    "types.ExprNode": types.ExprNode,
+    "stream_types.ExprNode": stream_types.ExprNode,
+
+    "types.LiteralValue": types.LiteralValue,
+    "stream_types.LiteralValue": stream_types.LiteralValue,
+
+    "types.LlmFunctionDescriptor": types.LlmFunctionDescriptor,
+    "stream_types.LlmFunctionDescriptor": stream_types.LlmFunctionDescriptor,
+
+    "types.ObjectField": types.ObjectField,
+    "stream_types.ObjectField": stream_types.ObjectField,
+
     "types.PlannerDecision": types.PlannerDecision,
     "stream_types.PlannerDecision": stream_types.PlannerDecision,
+
+    "types.ProgramMetadataEntry": types.ProgramMetadataEntry,
+    "stream_types.ProgramMetadataEntry": stream_types.ProgramMetadataEntry,
+
+    "types.RlmProgram": types.RlmProgram,
+    "stream_types.RlmProgram": stream_types.RlmProgram,
 
     "types.RollPlan": types.RollPlan,
     "stream_types.RollPlan": stream_types.RollPlan,
 
+    "types.RootObservation": types.RootObservation,
+    "stream_types.RootObservation": stream_types.RootObservation,
+
+    "types.RootRlmRequest": types.RootRlmRequest,
+    "stream_types.RootRlmRequest": stream_types.RootRlmRequest,
+
+    "types.RootRlmResponse": types.RootRlmResponse,
+    "stream_types.RootRlmResponse": stream_types.RootRlmResponse,
+
+    "types.RuntimeBudgetSnapshot": types.RuntimeBudgetSnapshot,
+    "stream_types.RuntimeBudgetSnapshot": stream_types.RuntimeBudgetSnapshot,
+
     "types.SpellInsertRow": types.SpellInsertRow,
     "stream_types.SpellInsertRow": stream_types.SpellInsertRow,
+
+    "types.StepNode": types.StepNode,
+    "stream_types.StepNode": stream_types.StepNode,
 
     "types.ToolCall": types.ToolCall,
     "stream_types.ToolCall": stream_types.ToolCall,
 
+    "types.ToolDescriptor": types.ToolDescriptor,
+    "stream_types.ToolDescriptor": stream_types.ToolDescriptor,
+
 
     "types.CharacterSheetIngestionErrorType": types.CharacterSheetIngestionErrorType,
 
+    "types.ComparisonOperator": types.ComparisonOperator,
+
     "types.DamageType": types.DamageType,
+
+    "types.ExprKind": types.ExprKind,
+
+    "types.LogicalOperator": types.LogicalOperator,
+
+    "types.ObservationKind": types.ObservationKind,
 
     "types.RollMode": types.RollMode,
 
+    "types.RootDecisionKind": types.RootDecisionKind,
+
     "types.SaveAbility": types.SaveAbility,
+
+    "types.StepKind": types.StepKind,
+
+    "types.UnaryOperator": types.UnaryOperator,
 
 }

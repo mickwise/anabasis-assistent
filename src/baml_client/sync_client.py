@@ -122,6 +122,20 @@ class BamlSyncClient:
                 "user_message": user_message,"discord_context": discord_context,"attachment_summary": attachment_summary,"world_state_snapshot": world_state_snapshot,"planner_instructions": planner_instructions,
             })
             return typing.cast(types.PlannerDecision, __result__.cast_to(types, types, stream_types, False, __runtime__))
+    def PlanRlmRootTurn(self, request: types.RootRlmRequest,
+        baml_options: BamlCallOptions = {},
+    ) -> types.RootRlmResponse:
+        # Check if on_tick is provided
+        if 'on_tick' in baml_options:
+            __stream__ = self.stream.PlanRlmRootTurn(request=request,
+                baml_options=baml_options)
+            return __stream__.get_final_response()
+        else:
+            # Original non-streaming code
+            __result__ = self.__options.merge_options(baml_options).call_function_sync(function_name="PlanRlmRootTurn", args={
+                "request": request,
+            })
+            return typing.cast(types.RootRlmResponse, __result__.cast_to(types, types, stream_types, False, __runtime__))
     def Roll(self, request: str,context: typing.Optional[str] = None,
         baml_options: BamlCallOptions = {},
     ) -> types.RollPlan:
@@ -183,6 +197,18 @@ class BamlStreamClient:
           lambda x: typing.cast(types.PlannerDecision, x.cast_to(types, types, stream_types, False, __runtime__)),
           __ctx__,
         )
+    def PlanRlmRootTurn(self, request: types.RootRlmRequest,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.BamlSyncStream[stream_types.RootRlmResponse, types.RootRlmResponse]:
+        __ctx__, __result__ = self.__options.merge_options(baml_options).create_sync_stream(function_name="PlanRlmRootTurn", args={
+            "request": request,
+        })
+        return baml_py.BamlSyncStream[stream_types.RootRlmResponse, types.RootRlmResponse](
+          __result__,
+          lambda x: typing.cast(stream_types.RootRlmResponse, x.cast_to(types, types, stream_types, True, __runtime__)),
+          lambda x: typing.cast(types.RootRlmResponse, x.cast_to(types, types, stream_types, False, __runtime__)),
+          __ctx__,
+        )
     def Roll(self, request: str,context: typing.Optional[str] = None,
         baml_options: BamlCallOptions = {},
     ) -> baml_py.BamlSyncStream[stream_types.RollPlan, types.RollPlan]:
@@ -229,6 +255,13 @@ class BamlHttpRequestClient:
             "user_message": user_message,"discord_context": discord_context,"attachment_summary": attachment_summary,"world_state_snapshot": world_state_snapshot,"planner_instructions": planner_instructions,
         }, mode="request")
         return __result__
+    def PlanRlmRootTurn(self, request: types.RootRlmRequest,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.baml_py.HTTPRequest:
+        __result__ = self.__options.merge_options(baml_options).create_http_request_sync(function_name="PlanRlmRootTurn", args={
+            "request": request,
+        }, mode="request")
+        return __result__
     def Roll(self, request: str,context: typing.Optional[str] = None,
         baml_options: BamlCallOptions = {},
     ) -> baml_py.baml_py.HTTPRequest:
@@ -263,6 +296,13 @@ class BamlHttpStreamRequestClient:
     ) -> baml_py.baml_py.HTTPRequest:
         __result__ = self.__options.merge_options(baml_options).create_http_request_sync(function_name="PlanDiscordMessage", args={
             "user_message": user_message,"discord_context": discord_context,"attachment_summary": attachment_summary,"world_state_snapshot": world_state_snapshot,"planner_instructions": planner_instructions,
+        }, mode="stream")
+        return __result__
+    def PlanRlmRootTurn(self, request: types.RootRlmRequest,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.baml_py.HTTPRequest:
+        __result__ = self.__options.merge_options(baml_options).create_http_request_sync(function_name="PlanRlmRootTurn", args={
+            "request": request,
         }, mode="stream")
         return __result__
     def Roll(self, request: str,context: typing.Optional[str] = None,
